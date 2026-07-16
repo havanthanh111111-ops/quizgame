@@ -2,14 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.ts": {
-      "includeFiles": [
-        "db.json",
-        "scores.json",
-        "teachers.json",
-        "classes.json",
-        "admin_config.json",
-        "firebase-applet-config.json"
-      ]
+      "includeFiles": "*.json"
     }
   },
   "rewrites": [
