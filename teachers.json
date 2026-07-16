@@ -1,0 +1,29 @@
+[
+  {
+    "createdAt": "2026-07-16T00:28:27.407Z",
+    "name": "Hệ thống chung",
+    "code": "CHUNG"
+  },
+  {
+    "createdAt": "2026-07-16T00:28:27.407Z",
+    "code": "CO_VY",
+    "name": "Cô Khánh Vy (Tiếng Anh - Tiếng Việt)"
+  },
+  {
+    "createdAt": "2026-07-16T00:28:27.407Z",
+    "code": "THAY_MINH",
+    "name": "Thầy Hùng Minh (Toán - Khoa học)"
+  },
+  {
+    "createdAt": "2026-07-16T00:42:05.532Z",
+    "name": "Thầy Thạnh",
+    "password": "12NAK_THANH",
+    "code": "12NAK",
+    "folders": [
+      {
+        "name": "VAT LY 12",
+        "id": "folder_mrmsqsyh"
+      }
+    ]
+  }
+]

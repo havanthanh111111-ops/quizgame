@@ -17,10 +17,9 @@ import {
   getDoc,
   setDoc, 
   deleteDoc, 
-  writeBatch, 
   query, 
   limit 
-} from "firebase/firestore";
+} from "firebase/firestore/lite";
 import fsSync from "fs";
 
 dotenv.config();
@@ -172,13 +171,12 @@ async function saveClasses(classes: any[]) {
 
   if (db) {
     try {
-      const batch = writeBatch(db);
       const batchClasses = classes.slice(0, 450);
-      for (const cl of batchClasses) {
+      const promises = batchClasses.map((cl) => {
         const docRef = doc(db, "classes", cl.code);
-        batch.set(docRef, cl);
-      }
-      await batch.commit();
+        return setDoc(docRef, cl);
+      });
+      await Promise.all(promises);
       console.log(`Saved ${batchClasses.length} classes to Firestore.`);
     } catch (error) {
       console.error("Failed to save classes to Firestore:", error);
@@ -226,13 +224,12 @@ async function saveTeachers(teachers: any[]) {
 
   if (db) {
     try {
-      const batch = writeBatch(db);
       const batchTeachers = teachers.slice(0, 450);
-      for (const teacher of batchTeachers) {
+      const promises = batchTeachers.map((teacher) => {
         const docRef = doc(db, "teachers", teacher.code);
-        batch.set(docRef, teacher);
-      }
-      await batch.commit();
+        return setDoc(docRef, teacher);
+      });
+      await Promise.all(promises);
       console.log(`Saved ${batchTeachers.length} teachers to Firestore.`);
     } catch (error) {
       console.error("Failed to save teachers to Firestore:", error);
@@ -280,14 +277,12 @@ async function saveLessons(lessons: any[]) {
 
   if (db) {
     try {
-      const batch = writeBatch(db);
-      // Ensure we don't exceed batch write limits (500)
       const batchLessons = lessons.slice(0, 450);
-      for (const lesson of batchLessons) {
+      const promises = batchLessons.map((lesson) => {
         const docRef = doc(db, "lessons", lesson.id);
-        batch.set(docRef, lesson);
-      }
-      await batch.commit();
+        return setDoc(docRef, lesson);
+      });
+      await Promise.all(promises);
       console.log(`Saved ${batchLessons.length} lessons to Firestore.`);
     } catch (error) {
       console.error("Failed to save lessons to Firestore:", error);
@@ -335,14 +330,12 @@ async function saveScores(scores: any[]) {
 
   if (db) {
     try {
-      const batch = writeBatch(db);
-      // Limit to stay below batch limits
       const batchScores = scores.slice(0, 450);
-      for (const score of batchScores) {
+      const promises = batchScores.map((score) => {
         const docRef = doc(db, "scores", score.id);
-        batch.set(docRef, score);
-      }
-      await batch.commit();
+        return setDoc(docRef, score);
+      });
+      await Promise.all(promises);
       console.log(`Saved ${batchScores.length} scores to Firestore.`);
     } catch (error) {
       console.error("Failed to save scores to Firestore:", error);
@@ -413,12 +406,11 @@ async function initDb() {
         console.log(`Synced ${remoteTeachers.length} teachers from Firestore to local.`);
       } else if (localTeachers.length > 0) {
         console.log("Firestore teachers collection is empty. Seeding from local...");
-        const batch = writeBatch(db);
-        for (const teacher of localTeachers) {
+        const promises = localTeachers.map((teacher) => {
           const docRef = doc(db, "teachers", teacher.code);
-          batch.set(docRef, teacher);
-        }
-        await batch.commit();
+          return setDoc(docRef, teacher);
+        });
+        await Promise.all(promises);
         console.log("Seeded teachers successfully.");
       }
     } catch (error) {
@@ -437,12 +429,11 @@ async function initDb() {
         console.log(`Synced ${remoteClasses.length} classes from Firestore to local.`);
       } else if (localClasses.length > 0) {
         console.log("Firestore classes collection is empty. Seeding from local...");
-        const batch = writeBatch(db);
-        for (const cl of localClasses) {
+        const promises = localClasses.map((cl) => {
           const docRef = doc(db, "classes", cl.code);
-          batch.set(docRef, cl);
-        }
-        await batch.commit();
+          return setDoc(docRef, cl);
+        });
+        await Promise.all(promises);
         console.log("Seeded classes successfully.");
       }
     } catch (error) {
@@ -461,12 +452,11 @@ async function initDb() {
         console.log(`Synced ${remoteLessons.length} lessons from Firestore to local.`);
       } else if (localLessons.length > 0) {
         console.log("Firestore lessons collection is empty. Seeding from local...");
-        const batch = writeBatch(db);
-        for (const lesson of localLessons) {
+        const promises = localLessons.map((lesson) => {
           const docRef = doc(db, "lessons", lesson.id);
-          batch.set(docRef, lesson);
-        }
-        await batch.commit();
+          return setDoc(docRef, lesson);
+        });
+        await Promise.all(promises);
         console.log("Seeded lessons successfully.");
       }
     } catch (error) {
@@ -485,12 +475,11 @@ async function initDb() {
         console.log(`Synced ${remoteScores.length} scores from Firestore to local.`);
       } else if (localScores.length > 0) {
         console.log("Firestore scores collection is empty. Seeding from local...");
-        const batch = writeBatch(db);
-        for (const score of localScores) {
+        const promises = localScores.map((score) => {
           const docRef = doc(db, "scores", score.id);
-          batch.set(docRef, score);
-        }
-        await batch.commit();
+          return setDoc(docRef, score);
+        });
+        await Promise.all(promises);
         console.log("Seeded scores successfully.");
       }
     } catch (error) {
@@ -521,11 +510,76 @@ async function initDb() {
   }
 }
 
+async function initTmpFiles() {
+  const files = [
+    { tmp: LESSONS_FILE, orig: path.join(process.cwd(), "db.json") },
+    { tmp: SCORES_FILE, orig: path.join(process.cwd(), "scores.json") },
+    { tmp: TEACHERS_FILE, orig: path.join(process.cwd(), "teachers.json") },
+    { tmp: CLASSES_FILE, orig: path.join(process.cwd(), "classes.json") },
+    { tmp: ADMIN_CONFIG_FILE, orig: path.join(process.cwd(), "admin_config.json") }
+  ];
+  for (const f of files) {
+    try {
+      await fs.access(f.tmp);
+    } catch {
+      try {
+        const data = await fs.readFile(f.orig, "utf-8");
+        await fs.writeFile(f.tmp, data, "utf-8");
+        console.log(`Initialized Vercel tmp file: ${f.tmp}`);
+      } catch (err) {
+        console.error(`Failed to initialize tmp file ${f.tmp}:`, err);
+      }
+    }
+  }
+}
+
 if (!process.env.VERCEL) {
   initDb().catch(console.error);
 } else {
-  console.log("Running in Vercel. Skipping initDb seeding/synchronization on startup.");
+  console.log("Running in Vercel. Skipping complete initDb seeding/synchronization on startup.");
+  initTmpFiles().catch(console.error);
 }
+
+// API: Get Firebase Configuration and Connection Status for Debugging
+app.get("/api/admin/firebase-status", async (req, res) => {
+  const envVars = {
+    FIREBASE_API_KEY: !!process.env.FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: !!process.env.FIREBASE_AUTH_DOMAIN,
+    FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: !!process.env.FIREBASE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: !!process.env.FIREBASE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: !!process.env.FIREBASE_APP_ID,
+    FIREBASE_DATABASE_ID: !!process.env.FIREBASE_DATABASE_ID
+  };
+  
+  const hasLocalConfig = fsSync.existsSync(path.join(process.cwd(), "firebase-applet-config.json"));
+  
+  let firestoreStatus = "Chưa kết nối";
+  let errorDetails = null;
+  
+  if (db) {
+    try {
+      // Test read connection with a short timeout
+      const adminDocRef = doc(db, "configs", "admin");
+      await getDoc(adminDocRef);
+      firestoreStatus = "Kết nối thành công ✅";
+    } catch (error: any) {
+      firestoreStatus = "Lỗi kết nối ❌";
+      errorDetails = error.message || String(error);
+    }
+  } else {
+    firestoreStatus = "Chưa khởi tạo client SDK (Thiếu cấu hình)";
+  }
+
+  res.json({
+    initialized: !!db,
+    firestoreStatus,
+    errorDetails,
+    hasLocalConfig,
+    envVars,
+    message: "Nếu bạn deploy lên Vercel, vui lòng truy cập Vercel Dashboard -> Settings -> Environment Variables và thêm đầy đủ cấu hình này từ file firebase-applet-config.json."
+  });
+});
 
 // API: Get all lessons metadata (no gameData to keep response small)
 app.get("/api/lessons", async (req, res) => {

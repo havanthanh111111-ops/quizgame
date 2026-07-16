@@ -36,6 +36,30 @@ export default function SuperAdminDashboard({
   const [editingPassword, setEditingPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Firebase configuration validation states
+  const [dbStatus, setDbStatus] = useState<any>(null);
+  const [checkingDb, setCheckingDb] = useState(false);
+  const [showStatusPanel, setShowStatusPanel] = useState(false);
+
+  const checkFirebaseStatus = async () => {
+    setCheckingDb(true);
+    setDbStatus(null);
+    setShowStatusPanel(true);
+    try {
+      const res = await fetch("/api/admin/firebase-status");
+      const data = await res.json();
+      setDbStatus(data);
+    } catch (err: any) {
+      setDbStatus({
+        initialized: false,
+        firestoreStatus: "Không thể kết nối đến API kiểm tra ❌",
+        errorDetails: err.message
+      });
+    } finally {
+      setCheckingDb(false);
+    }
+  };
+
   const handleAuthorize = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -224,6 +248,68 @@ export default function SuperAdminDashboard({
             </button>
           </div>
         </form>
+
+        <div className="mt-6 pt-6 border-t border-slate-100">
+          <div className="flex flex-col items-center">
+            <button
+              type="button"
+              onClick={checkFirebaseStatus}
+              disabled={checkingDb}
+              className="text-xs text-slate-500 hover:text-amber-600 font-bold underline cursor-pointer transition-colors"
+            >
+              {checkingDb ? "Đang kiểm tra kết nối Cloud..." : "Kiểm tra cấu hình Vercel / Cloud Database"}
+            </button>
+            
+            {showStatusPanel && (
+              <div className="mt-4 w-full text-left bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs space-y-3 max-h-[300px] overflow-y-auto">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="font-bold text-slate-700">Trạng thái Firestore:</span>
+                  <span className={`font-black uppercase tracking-tight text-[10px] ${dbStatus?.firestoreStatus?.includes("thành công") ? "text-emerald-600" : "text-rose-600"}`}>
+                    {checkingDb ? "Đang quét..." : dbStatus?.firestoreStatus || "Đang tải..."}
+                  </span>
+                </div>
+                
+                {dbStatus?.errorDetails && (
+                  <div className="bg-rose-50 border border-rose-100 text-rose-700 rounded-xl p-2.5 text-[9px] font-mono whitespace-pre-wrap break-all">
+                    <strong>Chi tiết lỗi:</strong> {dbStatus.errorDetails}
+                  </div>
+                )}
+                
+                <div className="space-y-1.5">
+                  <div className="text-[9px] uppercase font-black text-slate-400 tracking-wider">Danh sách biến môi trường (Environment Variables)</div>
+                  {dbStatus?.envVars && Object.entries(dbStatus.envVars).map(([key, val]) => (
+                    <div key={key} className="flex justify-between items-center font-mono text-[9px]">
+                      <span className="text-slate-500">{key}:</span>
+                      <span className={val ? "text-emerald-600 font-bold" : "text-rose-600 font-bold"}>
+                        {val ? "ĐÃ CẤU HÌNH (OK) ✅" : "CHƯA CẤU HÌNH (THIẾU) ❌"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="text-[10px] text-slate-500 leading-relaxed bg-amber-50 border border-amber-200/50 p-3 rounded-xl space-y-1">
+                  <strong>💡 Hướng dẫn cấu hình trên Vercel:</strong>
+                  <ol className="list-decimal pl-4 mt-1 space-y-1 text-[9px]">
+                    <li>Mở file <strong>firebase-applet-config.json</strong> ở gốc thư mục dự án này.</li>
+                    <li>Vào trang quản trị dự án của bạn trên <strong>Vercel Dashboard</strong> -&gt; <strong>Settings</strong> -&gt; <strong>Environment Variables</strong>.</li>
+                    <li>Thêm các key tương ứng từ file json với định dạng:
+                      <ul className="list-disc pl-4 mt-0.5 font-mono text-[8px] text-slate-600">
+                        <li>FIREBASE_API_KEY = (giá trị apiKey)</li>
+                        <li>FIREBASE_AUTH_DOMAIN = (giá trị authDomain)</li>
+                        <li>FIREBASE_PROJECT_ID = (giá trị projectId)</li>
+                        <li>FIREBASE_STORAGE_BUCKET = (giá trị storageBucket)</li>
+                        <li>FIREBASE_MESSAGING_SENDER_ID = (giá trị messagingSenderId)</li>
+                        <li>FIREBASE_APP_ID = (giá trị appId)</li>
+                        <li>FIREBASE_DATABASE_ID = (giá trị firestoreDatabaseId)</li>
+                      </ul>
+                    </li>
+                    <li>Sau khi lưu, hãy <strong>Redeploy</strong> lại dự án trên Vercel để áp dụng!</li>
+                  </ol>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
