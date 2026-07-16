@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "Lesson": {
+      "title": "Lesson",
+      "description": "Represents an educational lesson with generated game quiz data.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "grade": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "gamesGenerated": { "type": "object" },
+        "gameData": { "type": "object" },
+        "folderId": { "type": "string" }
+      },
+      "required": ["id", "title", "content", "createdAt"]
+    },
+    "Score": {
+      "title": "Score",
+      "description": "Represents a student's score from playing a game.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentClass": { "type": "string" },
+        "lessonId": { "type": "string" },
+        "lessonTitle": { "type": "string" },
+        "gameKey": { "type": "string" },
+        "gameName": { "type": "string" },
+        "score": { "type": "integer" },
+        "maxScore": { "type": "integer" },
+        "completedAt": { "type": "string" }
+      },
+      "required": ["id", "studentName", "lessonId", "gameKey", "score", "maxScore", "completedAt"]
+    },
+    "Teacher": {
+      "title": "Teacher",
+      "description": "Represents a teacher with custom folders.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "password": { "type": "string" },
+        "folders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "createdAt": { "type": "string" }
+            },
+            "required": ["id", "name", "createdAt"]
+          }
+        }
+      },
+      "required": ["code", "name", "createdAt"]
+    },
+    "Class": {
+      "title": "Class",
+      "description": "Represents a class code with assigned lessons.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "teacherCode": { "type": "string" },
+        "assignedLessonIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["code", "name", "teacherCode", "assignedLessonIds", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/lessons/{lessonId}": {
+      "schema": "Lesson",
+      "description": "Educational lessons and generated quizzes."
+    },
+    "/scores/{scoreId}": {
+      "schema": "Score",
+      "description": "Scores submitted by students upon game completion."
+    },
+    "/teachers/{teacherCode}": {
+      "schema": "Teacher",
+      "description": "Registered teachers and their folders."
+    },
+    "/classes/{classCode}": {
+      "schema": "Class",
+      "description": "Class codes with assigned lessons."
+    }
+  }
+}

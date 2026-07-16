@@ -1,0 +1,6 @@
+{
+  "name": "Trò Chơi Ôn Tập Bài Học",
+  "description": "Học sinh ôn tập kiến thức thông qua 10 trò chơi trí tuệ kịch tính: Rung Chuông Vàng, Ai Là Triệu Phú, Olympia, Chiếc Nón Kỳ Diệu, Đuổi Hình Bắt Chữ, Kahoot, Quizizz, Escape Room, Mật Mã Bí Ẩn và Truy Tìm Kho Báu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
