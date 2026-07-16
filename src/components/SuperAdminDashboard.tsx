@@ -47,13 +47,24 @@ export default function SuperAdminDashboard({
     setShowStatusPanel(true);
     try {
       const res = await fetch("/api/admin/firebase-status");
+      
+      if (!res.ok) {
+        throw new Error(`Yêu cầu thất bại với mã lỗi HTTP ${res.status} (${res.statusText}). Nếu bạn đang thử trên Vercel, vui lòng Redeploy lại toàn bộ dự án trên Vercel để cập nhật API mới nhất.`);
+      }
+      
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        throw new Error(`Phản hồi từ máy chủ không phải là JSON (Content-Type: ${contentType || "none"}). Nội dung nhận được bắt đầu bằng: "${text.substring(0, 100)}...". Điều này thường xảy ra khi bạn chưa Redeploy/Deploy code mới nhất lên Vercel.`);
+      }
+      
       const data = await res.json();
       setDbStatus(data);
     } catch (err: any) {
       setDbStatus({
         initialized: false,
         firestoreStatus: "Không thể kết nối đến API kiểm tra ❌",
-        errorDetails: err.message
+        errorDetails: err.message || String(err)
       });
     } finally {
       setCheckingDb(false);
