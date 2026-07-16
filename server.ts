@@ -62,11 +62,32 @@ try {
     };
     console.log("Firebase initialized using Environment Variables configuration.");
   } else {
-    // 2. Fallback to local config file
+    // 2. Fallback to local config file (check multiple possible path variations for Vercel/bundlers compatibility)
     const configPath = path.join(process.cwd(), "firebase-applet-config.json");
+    const fallbackPath1 = path.join(__dirname, "firebase-applet-config.json");
+    const fallbackPath2 = path.join(__dirname, "..", "firebase-applet-config.json");
+    const fallbackPath3 = path.join(process.cwd(), "api", "firebase-applet-config.json");
+
+    let finalConfigPath = "";
     if (fsSync.existsSync(configPath)) {
-      firebaseConfig = JSON.parse(fsSync.readFileSync(configPath, "utf-8"));
-      console.log("Firebase initialized using firebase-applet-config.json.");
+      finalConfigPath = configPath;
+    } else if (fsSync.existsSync(fallbackPath1)) {
+      finalConfigPath = fallbackPath1;
+    } else if (fsSync.existsSync(fallbackPath2)) {
+      finalConfigPath = fallbackPath2;
+    } else if (fsSync.existsSync(fallbackPath3)) {
+      finalConfigPath = fallbackPath3;
+    }
+
+    if (finalConfigPath) {
+      try {
+        firebaseConfig = JSON.parse(fsSync.readFileSync(finalConfigPath, "utf-8"));
+        console.log(`Firebase initialized successfully using configuration file at: ${finalConfigPath}`);
+      } catch (err: any) {
+        console.error(`Failed to parse configuration file at ${finalConfigPath}:`, err);
+      }
+    } else {
+      console.warn("WARNING: firebase-applet-config.json could not be located in any known path variations.");
     }
   }
 
@@ -511,23 +532,51 @@ async function initDb() {
 }
 
 async function initTmpFiles() {
-  const files = [
-    { tmp: LESSONS_FILE, orig: path.join(process.cwd(), "db.json") },
-    { tmp: SCORES_FILE, orig: path.join(process.cwd(), "scores.json") },
-    { tmp: TEACHERS_FILE, orig: path.join(process.cwd(), "teachers.json") },
-    { tmp: CLASSES_FILE, orig: path.join(process.cwd(), "classes.json") },
-    { tmp: ADMIN_CONFIG_FILE, orig: path.join(process.cwd(), "admin_config.json") }
+  const fileMappings = [
+    { tmp: LESSONS_FILE, filename: "db.json" },
+    { tmp: SCORES_FILE, filename: "scores.json" },
+    { tmp: TEACHERS_FILE, filename: "teachers.json" },
+    { tmp: CLASSES_FILE, filename: "classes.json" },
+    { tmp: ADMIN_CONFIG_FILE, filename: "admin_config.json" }
   ];
-  for (const f of files) {
+
+  for (const f of fileMappings) {
     try {
       await fs.access(f.tmp);
     } catch {
-      try {
-        const data = await fs.readFile(f.orig, "utf-8");
-        await fs.writeFile(f.tmp, data, "utf-8");
-        console.log(`Initialized Vercel tmp file: ${f.tmp}`);
-      } catch (err) {
-        console.error(`Failed to initialize tmp file ${f.tmp}:`, err);
+      // Find where the source JSON file is
+      const pathsToTry = [
+        path.join(process.cwd(), f.filename),
+        path.join(__dirname, f.filename),
+        path.join(__dirname, "..", f.filename),
+        path.join(process.cwd(), "api", f.filename)
+      ];
+
+      let data = "";
+      let found = false;
+
+      for (const p of pathsToTry) {
+        try {
+          if (fsSync.existsSync(p)) {
+            data = await fs.readFile(p, "utf-8");
+            found = true;
+            console.log(`Found original template file for ${f.filename} at: ${p}`);
+            break;
+          }
+        } catch {
+          // ignore and check next path
+        }
+      }
+
+      if (found) {
+        try {
+          await fs.writeFile(f.tmp, data, "utf-8");
+          console.log(`Successfully copied template file to Vercel tmp path: ${f.tmp}`);
+        } catch (err) {
+          console.error(`Failed to write file to Vercel tmp path ${f.tmp}:`, err);
+        }
+      } else {
+        console.error(`CRITICAL: Original file ${f.filename} could not be found in any of the checked paths.`);
       }
     }
   }
@@ -542,43 +591,55 @@ if (!process.env.VERCEL) {
 
 // API: Get Firebase Configuration and Connection Status for Debugging
 app.get("/api/admin/firebase-status", async (req, res) => {
-  const envVars = {
-    FIREBASE_API_KEY: !!process.env.FIREBASE_API_KEY,
-    FIREBASE_AUTH_DOMAIN: !!process.env.FIREBASE_AUTH_DOMAIN,
-    FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID,
-    FIREBASE_STORAGE_BUCKET: !!process.env.FIREBASE_STORAGE_BUCKET,
-    FIREBASE_MESSAGING_SENDER_ID: !!process.env.FIREBASE_MESSAGING_SENDER_ID,
-    FIREBASE_APP_ID: !!process.env.FIREBASE_APP_ID,
-    FIREBASE_DATABASE_ID: !!process.env.FIREBASE_DATABASE_ID
-  };
-  
-  const hasLocalConfig = fsSync.existsSync(path.join(process.cwd(), "firebase-applet-config.json"));
-  
-  let firestoreStatus = "Chưa kết nối";
-  let errorDetails = null;
-  
-  if (db) {
-    try {
-      // Test read connection with a short timeout
-      const adminDocRef = doc(db, "configs", "admin");
-      await getDoc(adminDocRef);
-      firestoreStatus = "Kết nối thành công ✅";
-    } catch (error: any) {
-      firestoreStatus = "Lỗi kết nối ❌";
-      errorDetails = error.message || String(error);
+  try {
+    const envVars = {
+      FIREBASE_API_KEY: !!process.env.FIREBASE_API_KEY,
+      FIREBASE_AUTH_DOMAIN: !!process.env.FIREBASE_AUTH_DOMAIN,
+      FIREBASE_PROJECT_ID: !!process.env.FIREBASE_PROJECT_ID,
+      FIREBASE_STORAGE_BUCKET: !!process.env.FIREBASE_STORAGE_BUCKET,
+      FIREBASE_MESSAGING_SENDER_ID: !!process.env.FIREBASE_MESSAGING_SENDER_ID,
+      FIREBASE_APP_ID: !!process.env.FIREBASE_APP_ID,
+      FIREBASE_DATABASE_ID: !!process.env.FIREBASE_DATABASE_ID
+    };
+    
+    const hasLocalConfig = fsSync.existsSync(path.join(process.cwd(), "firebase-applet-config.json"));
+    
+    let firestoreStatus = "Chưa kết nối";
+    let errorDetails = null;
+    
+    if (db) {
+      try {
+        // Test read connection with a short timeout
+        const adminDocRef = doc(db, "configs", "admin");
+        await getDoc(adminDocRef);
+        firestoreStatus = "Kết nối thành công ✅";
+      } catch (error: any) {
+        firestoreStatus = "Lỗi kết nối ❌";
+        errorDetails = error.message || String(error);
+      }
+    } else {
+      firestoreStatus = "Chưa khởi tạo client SDK (Thiếu cấu hình)";
     }
-  } else {
-    firestoreStatus = "Chưa khởi tạo client SDK (Thiếu cấu hình)";
-  }
 
-  res.json({
-    initialized: !!db,
-    firestoreStatus,
-    errorDetails,
-    hasLocalConfig,
-    envVars,
-    message: "Nếu bạn deploy lên Vercel, vui lòng truy cập Vercel Dashboard -> Settings -> Environment Variables và thêm đầy đủ cấu hình này từ file firebase-applet-config.json."
-  });
+    res.json({
+      initialized: !!db,
+      firestoreStatus,
+      errorDetails,
+      hasLocalConfig,
+      envVars,
+      message: "Nếu bạn deploy lên Vercel, vui lòng truy cập Vercel Dashboard -> Settings -> Environment Variables và thêm đầy đủ cấu hình này từ file firebase-applet-config.json."
+    });
+  } catch (globalError: any) {
+    console.error("Critical error in /api/admin/firebase-status:", globalError);
+    res.json({
+      initialized: false,
+      firestoreStatus: "Lỗi hệ thống Express ❌",
+      errorDetails: `Lỗi bất ngờ xảy ra trên máy chủ: ${globalError.message || String(globalError)}. Stack trace: ${globalError.stack || ""}`,
+      hasLocalConfig: false,
+      envVars: {},
+      message: "Vui lòng kiểm tra log trên hệ thống của bạn để biết thêm chi tiết."
+    });
+  }
 });
 
 // API: Get all lessons metadata (no gameData to keep response small)
