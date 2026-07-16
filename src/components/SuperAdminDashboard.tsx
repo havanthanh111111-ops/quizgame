@@ -45,7 +45,19 @@ export default function SuperAdminDashboard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ passcode }),
       });
-      const data = await res.json();
+      
+      let data: any = {};
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        if (text.includes("404") || res.status === 404) {
+          throw new Error("Trang không tìm thấy (404). Vui lòng đảm bảo bạn đang dùng liên kết phát triển (ais-dev) hoặc bấm chia sẻ/triển khai lại app để cập nhật máy chủ.");
+        }
+        throw new Error(text.substring(0, 100) || `Mã lỗi ${res.status}`);
+      }
+
       if (res.ok && data.success) {
         setIsAuthorized(true);
         setValidatedPasscode(passcode);
