@@ -521,7 +521,11 @@ async function initDb() {
   }
 }
 
-initDb().catch(console.error);
+if (!process.env.VERCEL) {
+  initDb().catch(console.error);
+} else {
+  console.log("Running in Vercel. Skipping initDb seeding/synchronization on startup.");
+}
 
 // API: Get all lessons metadata (no gameData to keep response small)
 app.get("/api/lessons", async (req, res) => {
