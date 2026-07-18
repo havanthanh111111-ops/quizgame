@@ -247,9 +247,9 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                 </span>
               </div>
 
-              <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800">
+              <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800 text-white">
                 <span className="text-xs text-cyan-400 font-mono font-bold uppercase block mb-2">Câu Hỏi {r1Idx + 1}/10</span>
-                <div className="text-lg font-semibold font-sans"><MathText text={data.round1[r1Idx]?.question} /></div>
+                <div className="text-lg font-semibold font-sans text-white"><MathText text={data.round1[r1Idx]?.question} /></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -257,7 +257,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                   <button
                     key={idx}
                     onClick={() => handleR1Answer(idx)}
-                    className="bg-slate-950/40 border border-slate-800 hover:border-cyan-500 hover:bg-slate-950 text-left p-4 rounded-xl text-sm md:text-base font-sans font-semibold transition-all"
+                    className="bg-slate-950/40 border border-slate-800 hover:border-cyan-500 hover:bg-slate-950 text-white text-left p-4 rounded-xl text-sm md:text-base font-sans font-semibold transition-all"
                   >
                     <MathText text={opt} />
                   </button>
@@ -349,10 +349,10 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
               {/* Right Column: Active question & clues box */}
               <div className="md:col-span-5 space-y-4">
                 {r2ActiveRow !== null ? (
-                  <div className="bg-slate-950/80 p-5 rounded-xl border border-cyan-500/30 h-full flex flex-col justify-between">
+                  <div className="bg-slate-950/80 p-5 rounded-xl border border-cyan-500/30 h-full flex flex-col justify-between text-white">
                     <div>
                       <span className="text-xs font-mono text-cyan-400 uppercase font-bold block mb-2">ĐANG GIẢI HÀNG NGANG {r2ActiveRow + 1}</span>
-                      <div className="text-sm font-medium mb-4"><MathText text={data.round2.clues[r2ActiveRow].question} /></div>
+                      <div className="text-sm font-medium mb-4 text-white"><MathText text={data.round2.clues[r2ActiveRow].question} /></div>
 
                       <input
                         type="text"
@@ -422,14 +422,14 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                 </span>
               </div>
 
-              <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800">
+              <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800 text-white">
                 <span className="text-xs text-amber-500 font-mono font-bold uppercase block mb-2">CÂU HỎI TĂNG TỐC {r3Idx + 1}/4</span>
-                <div className="text-lg font-semibold font-sans"><MathText text={data.round3[r3Idx]?.question} /></div>
+                <div className="text-lg font-semibold font-sans text-white"><MathText text={data.round3[r3Idx]?.question} /></div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {data.round3[r3Idx]?.options.map((opt, idx) => {
-                  let btnClass = "border-slate-800 bg-slate-950/50 hover:bg-slate-950";
+                  let btnClass = "border-slate-800 bg-slate-950/50 hover:bg-slate-950 text-white";
                   if (r3IsAnswered) {
                     if (idx === data.round3[r3Idx].correctAnswer) {
                       btnClass = "border-green-500 bg-green-500/20 text-green-300";
@@ -515,15 +515,15 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                 </button>
               </div>
 
-              <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800">
-                <div className="text-lg font-semibold font-sans"><MathText text={data.round4[r4Idx]?.question} /></div>
+              <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800 text-white">
+                <div className="text-lg font-semibold font-sans text-white"><MathText text={data.round4[r4Idx]?.question} /></div>
               </div>
 
               {/* Options Grid (If options exist) */}
               {data.round4[r4Idx]?.options && data.round4[r4Idx].options.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {data.round4[r4Idx].options.map((opt, idx) => {
-                    let btnClass = "border-slate-800 bg-slate-950/50 hover:bg-slate-950";
+                    let btnClass = "border-slate-800 bg-slate-950/50 hover:bg-slate-950 text-white";
                     if (r4IsAnswered) {
                       const isThisCorrect = opt === data.round4[r4Idx].correctAnswer;
                       if (isThisCorrect) {
