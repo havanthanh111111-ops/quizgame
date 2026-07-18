@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { HelpCircle, Users, PhoneCall, Award, Trophy, ArrowRight, RotateCcw } from "lucide-react";
 import { MillionaireData } from "../../types";
 import { playSound } from "../../utils/sound";
+import { MathText } from "../MathText";
 
 interface Props {
   data: MillionaireData;
@@ -338,7 +339,7 @@ export default function Millionaire({ data, studentName, studentClass, lessonId,
           {/* Question Display */}
           <div className="bg-slate-50 p-6 rounded-2xl border-2 border-slate-100 mb-6 text-center shadow-inner relative">
             <h2 className="text-base md:text-xl font-sans font-black leading-relaxed text-slate-800 text-left md:text-center">
-              {currentQuestion.question}
+              <MathText text={currentQuestion.question} />
             </h2>
           </div>
 
@@ -375,7 +376,7 @@ export default function Millionaire({ data, studentName, studentClass, lessonId,
                   <span className="font-mono font-black text-xs bg-indigo-50 border border-indigo-100 w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-indigo-600">
                     {String.fromCharCode(65 + idx)}
                   </span>
-                  <span className={`flex-1 mt-0.5 ${isFiftyFiftyHidden ? "opacity-10" : ""}`}>{option}</span>
+                  <span className={`flex-1 mt-0.5 ${isFiftyFiftyHidden ? "opacity-10" : ""}`}><MathText text={option} /></span>
                 </button>
               );
             })}
@@ -403,9 +404,9 @@ export default function Millionaire({ data, studentName, studentClass, lessonId,
 
             {isAnswered && (
               <div className="flex items-center gap-4">
-                <p className="text-xs text-slate-500 max-w-xs text-right italic font-medium leading-normal hidden sm:block">
-                  {currentQuestion.explanation}
-                </p>
+                <div className="text-xs text-slate-500 max-w-xs text-right italic font-medium leading-normal hidden sm:block">
+                  <MathText text={currentQuestion.explanation} />
+                </div>
                 <button
                   onClick={handleNext}
                   className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-black px-6 py-2.5 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-md text-xs uppercase tracking-widest flex items-center gap-1.5"

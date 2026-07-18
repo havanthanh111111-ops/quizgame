@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, ArrowRight, Shield, Zap, Snowflake, HelpCircle, Trophy, Award, Flame } from "lucide-react";
 import { QuizizzData } from "../../types";
+import { MathText } from "../MathText";
 
 interface Props {
   data: QuizizzData;
@@ -193,7 +194,7 @@ export default function QuizizzGame({ data, studentName, studentClass, lessonId,
       {/* Main question box */}
       <div className="bg-slate-50 p-6 rounded-2xl border-2 border-slate-105 mb-6 text-center shadow-inner">
         <h2 className="text-base md:text-lg font-sans font-black leading-relaxed text-slate-800 text-left md:text-center">
-          {currentQuestion.question}
+          <MathText text={currentQuestion.question} />
         </h2>
       </div>
 
@@ -221,7 +222,7 @@ export default function QuizizzGame({ data, studentName, studentClass, lessonId,
               <span className="font-mono text-xs bg-white border border-slate-200 w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-violet-600 font-bold">
                 {String.fromCharCode(65 + idx)}
               </span>
-              <span>{option}</span>
+              <span><MathText text={option} /></span>
             </button>
           );
         })}
@@ -244,7 +245,7 @@ export default function QuizizzGame({ data, studentName, studentClass, lessonId,
 
             <div className="bg-white rounded-xl p-4 border border-slate-150 text-left mb-4 shadow-sm">
               <span className="text-[10px] font-mono text-slate-400 block uppercase mb-1 font-black">KIẾN THỨC BỔ TRỢ</span>
-              <p className="text-slate-700 text-sm leading-relaxed font-semibold">{currentQuestion.explanation}</p>
+              <p className="text-slate-700 text-sm leading-relaxed font-semibold"><MathText text={currentQuestion.explanation} /></p>
             </div>
 
             <div className="flex justify-end">

@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Award, Zap, ShieldAlert, Star, Compass, ArrowRight, CheckCircle, HelpCircle, AlertTriangle } from "lucide-react";
 import { OlympiaData } from "../../types";
+import { MathText } from "../MathText";
 
 interface Props {
   data: OlympiaData;
@@ -248,7 +249,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
 
               <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800">
                 <span className="text-xs text-cyan-400 font-mono font-bold uppercase block mb-2">Câu Hỏi {r1Idx + 1}/10</span>
-                <p className="text-lg font-semibold font-sans">{data.round1[r1Idx]?.question}</p>
+                <div className="text-lg font-semibold font-sans"><MathText text={data.round1[r1Idx]?.question} /></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -258,7 +259,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                     onClick={() => handleR1Answer(idx)}
                     className="bg-slate-950/40 border border-slate-800 hover:border-cyan-500 hover:bg-slate-950 text-left p-4 rounded-xl text-sm md:text-base font-sans font-semibold transition-all"
                   >
-                    {opt}
+                    <MathText text={opt} />
                   </button>
                 ))}
               </div>
@@ -351,7 +352,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                   <div className="bg-slate-950/80 p-5 rounded-xl border border-cyan-500/30 h-full flex flex-col justify-between">
                     <div>
                       <span className="text-xs font-mono text-cyan-400 uppercase font-bold block mb-2">ĐANG GIẢI HÀNG NGANG {r2ActiveRow + 1}</span>
-                      <p className="text-sm font-medium mb-4">{data.round2.clues[r2ActiveRow].question}</p>
+                      <div className="text-sm font-medium mb-4"><MathText text={data.round2.clues[r2ActiveRow].question} /></div>
 
                       <input
                         type="text"
@@ -423,7 +424,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
 
               <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800">
                 <span className="text-xs text-amber-500 font-mono font-bold uppercase block mb-2">CÂU HỎI TĂNG TỐC {r3Idx + 1}/4</span>
-                <p className="text-lg font-semibold font-sans">{data.round3[r3Idx]?.question}</p>
+                <div className="text-lg font-semibold font-sans"><MathText text={data.round3[r3Idx]?.question} /></div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -449,7 +450,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                       <span className="font-mono text-xs bg-slate-900 border border-slate-800 w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-amber-500">
                         {String.fromCharCode(65 + idx)}
                       </span>
-                      <span>{opt}</span>
+                      <span><MathText text={opt} /></span>
                     </button>
                   );
                 })}
@@ -457,7 +458,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
 
               {r3IsAnswered && (
                 <div className="bg-slate-950 rounded-xl p-5 border border-slate-800 flex justify-between items-center flex-wrap gap-4">
-                  <p className="text-xs text-slate-400 max-w-md">{data.round3[r3Idx]?.explanation}</p>
+                  <div className="text-xs text-slate-400 max-w-md"><MathText text={data.round3[r3Idx]?.explanation} /></div>
                   <button
                     onClick={handleR3Next}
                     className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2 rounded-lg text-xs uppercase"
@@ -515,7 +516,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
               </div>
 
               <div className="bg-slate-950/60 rounded-xl p-6 border border-slate-800">
-                <p className="text-lg font-semibold font-sans">{data.round4[r4Idx]?.question}</p>
+                <div className="text-lg font-semibold font-sans"><MathText text={data.round4[r4Idx]?.question} /></div>
               </div>
 
               {/* Options Grid (If options exist) */}
@@ -544,7 +545,7 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
                         <span className="font-mono text-xs bg-slate-900 border border-slate-800 w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-red-400">
                           {String.fromCharCode(65 + idx)}
                         </span>
-                        <span>{opt}</span>
+                        <span><MathText text={opt} /></span>
                       </button>
                     );
                   })}
@@ -586,8 +587,8 @@ export default function Olympia({ data, studentName, studentClass, lessonId, onC
               {r4IsAnswered && (
                 <div className="bg-slate-950 rounded-xl p-5 border border-slate-800">
                   <span className="text-xs uppercase font-bold text-slate-500 mb-1 block">Giải thích:</span>
-                  <p className="text-sm text-slate-400 mb-4">{data.round4[r4Idx]?.explanation}</p>
-                  <p className="text-xs text-green-400 font-bold mb-4">✓ Đáp án đúng: {data.round4[r4Idx]?.correctAnswer}</p>
+                  <div className="text-sm text-slate-400 mb-4"><MathText text={data.round4[r4Idx]?.explanation} /></div>
+                  <div className="text-xs text-green-400 font-bold mb-4">✓ Đáp án đúng: <MathText text={data.round4[r4Idx]?.correctAnswer} /></div>
                   <div className="flex justify-end">
                     <button
                       onClick={handleR4Next}

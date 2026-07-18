@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Key, Lock, Unlock, HelpCircle, AlertCircle, ArrowRight, ShieldCheck, Trophy, Sparkles, CheckCircle } from "lucide-react";
 import { EscapeRoomData } from "../../types";
 import { playSound } from "../../utils/sound";
+import { MathText } from "../MathText";
 
 interface Props {
   data: EscapeRoomData;
@@ -175,7 +176,7 @@ export default function EscapeRoom({ data, studentName, studentClass, lessonId, 
                 </span>
               </div>
               <p className="text-xs text-slate-700 font-sans font-bold">
-                <strong className="text-slate-400 font-mono text-[10px] block font-black uppercase tracking-wide">CÂU HỎI / THỬ THÁCH:</strong> {lvl.question}
+                <strong className="text-slate-400 font-mono text-[10px] block font-black uppercase tracking-wide">CÂU HỎI / THỬ THÁCH:</strong> <MathText text={lvl.question} />
               </p>
               <div className="bg-white p-2.5 rounded-lg border border-slate-150 grid grid-cols-1 gap-2 text-xs shadow-inner">
                 <div>
@@ -185,7 +186,7 @@ export default function EscapeRoom({ data, studentName, studentClass, lessonId, 
                 {lvl.explanation && (
                   <div>
                     <span className="text-slate-400 font-mono text-[10px] block font-black uppercase">TÓM TẮT KIẾN THỨC:</span>
-                    <span className="text-slate-600 leading-relaxed block text-[11px] font-semibold">{lvl.explanation}</span>
+                    <span className="text-slate-600 leading-relaxed block text-[11px] font-semibold"><MathText text={lvl.explanation} /></span>
                   </div>
                 )}
               </div>
@@ -303,9 +304,9 @@ export default function EscapeRoom({ data, studentName, studentClass, lessonId, 
         <div className="md:col-span-7 bg-white border-2 border-slate-105 p-6 rounded-2xl min-h-[300px] flex flex-col justify-between shadow-sm">
           <div>
             <span className="text-[10px] font-mono text-emerald-600 font-black block uppercase mb-1 tracking-wider">CÂU ĐỐ CHẶNG NÀY</span>
-            <p className="text-base font-black font-sans leading-relaxed mb-6 text-slate-800">
-              {activeLevel.question}
-            </p>
+            <div className="text-base font-black font-sans leading-relaxed mb-6 text-slate-800">
+              <MathText text={activeLevel.question} />
+            </div>
 
             {/* Puzzle interactive input based on option existence */}
             {!isUnlocked ? (
@@ -322,7 +323,7 @@ export default function EscapeRoom({ data, studentName, studentClass, lessonId, 
                             : "border-slate-200 bg-slate-50 text-slate-600 hover:border-emerald-500/50 shadow-sm"
                         }`}
                       >
-                        {opt}
+                        <MathText text={opt} />
                       </button>
                     ))}
                   </div>
@@ -379,7 +380,7 @@ export default function EscapeRoom({ data, studentName, studentClass, lessonId, 
 
                 <div className="text-xs text-slate-600 border-t border-slate-200 pt-3">
                   <span className="text-[10px] font-mono text-slate-400 block uppercase mb-1 font-black">GHI CHÚ HỌC TẬP:</span>
-                  <p className="leading-relaxed font-semibold">{activeLevel.explanation}</p>
+                  <p className="leading-relaxed font-semibold"><MathText text={activeLevel.explanation} /></p>
                   <p className="text-emerald-600 font-black mt-2 font-mono uppercase tracking-wide">
                     MÃ MỞ KHÓA CHUẨN: {activeLevel.correctAnswer}
                   </p>

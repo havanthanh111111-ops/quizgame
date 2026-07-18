@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Compass, Ship, Anchor, MapPin, Gift, Trophy, ArrowRight, RotateCcw, AlertTriangle, CheckCircle } from "lucide-react";
 import { TreasureHuntData } from "../../types";
 import { playSound } from "../../utils/sound";
+import { MathText } from "../MathText";
 
 interface Props {
   data: TreasureHuntData;
@@ -233,7 +234,7 @@ export default function TreasureHunt({ data, studentName, studentClass, lessonId
         {/* Right Column: Active Station Questions */}
         <div className="md:col-span-7 bg-white border-2 border-slate-105 p-6 rounded-2xl shadow-sm">
           <span className="text-[10px] font-mono text-amber-600 font-black block uppercase mb-1 tracking-wider">ĐỀ BÀI TRẠM SỐ {activeStation + 1} • {currentStationData.name}</span>
-          <h3 className="text-base font-black font-sans leading-relaxed mb-6 text-slate-800">{currentStationData.question}</h3>
+          <h3 className="text-base font-black font-sans leading-relaxed mb-6 text-slate-800"><MathText text={currentStationData.question} /></h3>
 
           {/* Form types */}
           {!isAnswered ? (
@@ -250,7 +251,7 @@ export default function TreasureHunt({ data, studentName, studentClass, lessonId
                           : "border-slate-200 bg-slate-50 text-slate-600 hover:border-amber-500/50 shadow-sm"
                       }`}
                     >
-                      {opt}
+                      <MathText text={opt} />
                     </button>
                   ))}
                 </div>
@@ -323,7 +324,7 @@ export default function TreasureHunt({ data, studentName, studentClass, lessonId
 
               <div className="text-xs text-slate-600 border-t border-slate-200 pt-3">
                 <span className="text-[10px] font-mono text-slate-400 block uppercase mb-1 font-black">ĐIỂM GHI CHÚ:</span>
-                <p className="leading-relaxed font-semibold">{currentStationData.explanation}</p>
+                <p className="leading-relaxed font-semibold"><MathText text={currentStationData.explanation} /></p>
                 <p className="text-emerald-600 font-black mt-2 uppercase tracking-wide">
                   Đáp án chính xác: {currentStationData.correctAnswer}
                 </p>

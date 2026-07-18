@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Image, Lightbulb, CheckCircle, RotateCcw, ArrowRight, HelpCircle, Trophy } from "lucide-react";
 import { PictogramData } from "../../types";
 import { playSound } from "../../utils/sound";
+import { MathText } from "../MathText";
 
 interface Props {
   data: PictogramData;
@@ -155,9 +156,9 @@ export default function PictogramGame({ data, studentName, studentClass, lessonI
         </motion.div>
 
         {/* Picture descriptive riddle */}
-        <p className="text-sm md:text-base text-slate-700 max-w-lg mt-2 font-bold italic">
-          "{currentPuzzle.visualDescription}"
-        </p>
+        <div className="text-sm md:text-base text-slate-700 max-w-lg mt-2 font-bold italic">
+          "<MathText text={currentPuzzle.visualDescription} />"
+        </div>
       </div>
 
       {/* Answer Slots Display showing letters and blanks */}
@@ -242,9 +243,9 @@ export default function PictogramGame({ data, studentName, studentClass, lessonI
               Đáp án chính xác: <span className="text-yellow-600 font-black uppercase">{currentPuzzle.word}</span>
             </p>
 
-            <p className="text-slate-600 text-sm leading-relaxed mb-4 font-medium">
-              {currentPuzzle.explanation}
-            </p>
+            <div className="text-slate-600 text-sm leading-relaxed mb-4 font-medium">
+              <MathText text={currentPuzzle.explanation} />
+            </div>
 
             <div className="flex justify-end">
               <button

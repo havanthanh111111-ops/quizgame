@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Bell, Trophy, RotateCcw, AlertCircle, Sparkles, Heart, Clock } from "lucide-react";
 import { GoldenBellData, StudentProgress } from "../../types";
 import { playSound } from "../../utils/sound";
+import { MathText } from "../MathText";
 
 interface Props {
   data: GoldenBellData;
@@ -150,9 +151,9 @@ export default function GoldenBell({ data, studentName, studentClass, lessonId, 
 
         <div className="bg-slate-50 rounded-2xl p-4 mb-8 border border-slate-150 text-left max-w-2xl mx-auto">
           <p className="text-[10px] text-slate-400 font-mono uppercase font-black tracking-widest mb-1">CÂU HỎI VỪA QUA:</p>
-          <p className="text-slate-700 font-bold mb-2 text-sm">{currentQuestion.question}</p>
+          <p className="text-slate-700 font-bold mb-2 text-sm"><MathText text={currentQuestion.question} /></p>
           <p className="text-sm font-bold text-emerald-600">
-            ✓ Đáp án đúng: {currentQuestion.options[currentQuestion.correctAnswer]}
+            ✓ Đáp án đúng: <MathText text={currentQuestion.options[currentQuestion.correctAnswer]} />
           </p>
         </div>
 
@@ -276,7 +277,7 @@ export default function GoldenBell({ data, studentName, studentClass, lessonId, 
           exit={{ opacity: 0, y: -15 }}
           className="text-lg md:text-2xl font-sans font-black text-slate-800 mb-6 leading-relaxed text-left"
         >
-          {currentQuestion.question}
+          <MathText text={currentQuestion.question} />
         </motion.div>
 
         {/* Options Grid */}
@@ -303,7 +304,7 @@ export default function GoldenBell({ data, studentName, studentClass, lessonId, 
                 <span className="font-mono font-black bg-indigo-50 border border-indigo-100 w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-indigo-600 text-xs">
                   {String.fromCharCode(65 + idx)}
                 </span>
-                <span className="flex-1 mt-0.5">{option}</span>
+                <span className="flex-1 mt-0.5"><MathText text={option} /></span>
               </button>
             );
           })}
@@ -331,7 +332,7 @@ export default function GoldenBell({ data, studentName, studentClass, lessonId, 
             </div>
             <p className="text-slate-600 text-xs font-semibold uppercase tracking-wider mb-1">Giải thích học liệu:</p>
             <p className="text-slate-700 text-sm leading-relaxed mb-4 font-medium">
-              {currentQuestion.explanation}
+              <MathText text={currentQuestion.explanation} />
             </p>
 
             <div className="flex justify-between items-center border-t border-indigo-100/60 pt-4">

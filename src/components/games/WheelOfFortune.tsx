@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { RotateCw, HelpCircle, Trophy, Sparkles, Check, AlertTriangle } from "lucide-react";
 import { WheelOfFortuneData } from "../../types";
 import { playSound } from "../../utils/sound";
+import { MathText } from "../MathText";
 
 interface Props {
   data: WheelOfFortuneData;
@@ -223,7 +224,7 @@ export default function WheelOfFortune({ data, studentName, studentClass, lesson
       {/* Clue/Hint display box */}
       <div className="bg-slate-50 p-5 rounded-2xl border-2 border-slate-100 mb-6 relative overflow-hidden">
         <span className="text-[10px] font-mono font-black text-emerald-600 uppercase tracking-widest block mb-2">ĐỊNH NGHĨA CHỦ ĐỀ</span>
-        <p className="text-base font-sans font-semibold text-slate-700">{activePuzzle.clue}</p>
+        <div className="text-base font-sans font-semibold text-slate-700"><MathText text={activePuzzle.clue} /></div>
       </div>
 
       {/* Letter Grid slots */}

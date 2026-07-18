@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { HelpCircle, Key, Trophy, Award, Trash2, ArrowRight, CheckCircle, RotateCcw } from "lucide-react";
 import { SecretCodeData } from "../../types";
+import { MathText } from "../MathText";
 
 interface Props {
   data: SecretCodeData;
@@ -168,18 +169,18 @@ export default function SecretCode({ data, studentName, studentClass, lessonId, 
       {/* Clue Panel depending on hintLevel */}
       <div className="bg-slate-50 p-4 rounded-xl border-2 border-slate-105 mb-6 shadow-inner">
         <span className="text-[10px] font-mono font-black text-teal-600 block uppercase mb-1 tracking-wider">Mã lực gợi ý bài học</span>
-        <p className="text-xs text-slate-700 leading-relaxed font-sans font-semibold">
-          {data.wordDefinition}
-        </p>
+        <div className="text-xs text-slate-700 leading-relaxed font-sans font-semibold">
+          <MathText text={data.wordDefinition} />
+        </div>
         {hintLevel >= 1 && (
-          <p className="text-xs text-amber-600 mt-2 border-t border-slate-200 pt-2 font-black leading-relaxed">
-            💡 Gợi ý bổ sung: {data.clues[0]}
-          </p>
+          <div className="text-xs text-amber-600 mt-2 border-t border-slate-200 pt-2 font-black leading-relaxed">
+            💡 Gợi ý bổ sung: <MathText text={data.clues[0]} />
+          </div>
         )}
         {hintLevel >= 2 && (
-          <p className="text-xs text-emerald-600 mt-1 font-black leading-relaxed">
-            💡 Gợi ý bổ sung 2: {data.clues[1]}
-          </p>
+          <div className="text-xs text-emerald-600 mt-1 font-black leading-relaxed">
+            💡 Gợi ý bổ sung 2: <MathText text={data.clues[1]} />
+          </div>
         )}
       </div>
 
