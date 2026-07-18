@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Clock, Play, Users, Trophy, Award, ArrowRight, CheckCircle, RotateCcw } from "lucide-react";
 import { KahootData } from "../../types";
+import { MathText } from "../MathText";
 
 interface Props {
   data: KahootData;
@@ -252,7 +253,7 @@ export default function KahootGame({ data, studentName, studentClass, lessonId, 
       {/* Core Question Content */}
       <div className="bg-slate-50 p-8 rounded-2xl border-2 border-slate-100 text-center mb-8 shadow-inner relative overflow-hidden">
         <h2 className="text-base md:text-xl font-sans font-black leading-relaxed text-slate-800 text-left md:text-center">
-          {currentQuestion.question}
+          <MathText text={currentQuestion.question} />
         </h2>
       </div>
 
@@ -272,7 +273,7 @@ export default function KahootGame({ data, studentName, studentClass, lessonId, 
                 <span className="text-2xl font-black w-8 h-8 rounded-lg bg-black/10 flex items-center justify-center shrink-0">
                   {shape}
                 </span>
-                <span>{option}</span>
+                <MathText text={option} />
               </button>
             );
           })}
@@ -293,7 +294,7 @@ export default function KahootGame({ data, studentName, studentClass, lessonId, 
           </div>
 
           <p className="text-slate-600 text-sm leading-relaxed mb-6 font-medium">
-            Đáp án đúng: <span className="text-slate-800 font-black">{currentQuestion.options[currentQuestion.correctAnswer]}</span>
+            Đáp án đúng: <span className="text-slate-800 font-black"><MathText text={currentQuestion.options[currentQuestion.correctAnswer]} /></span>
           </p>
 
           <div className="flex justify-end">
